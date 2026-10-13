@@ -75,6 +75,7 @@ function PartyListPage({ config }: PartyListPageProps) {
         ...(!editingParty
           ? {
               openingBalanceAmount: Number(values.openingBalanceAmount || 0),
+              openingBalanceDate: values.openingBalanceDate,
               openingBalanceSide: values.openingBalanceSide,
             }
           : {}),
