@@ -7,6 +7,11 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
+const percentFormatter = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
   month: "2-digit",
@@ -23,6 +28,10 @@ const dateTimeFormatter = new Intl.DateTimeFormat("en-GB", {
 
 export function formatNumber(value: number): string {
   return numberFormatter.format(value);
+}
+
+export function formatPercent(value: number): string {
+  return percentFormatter.format(value);
 }
 
 export function formatCurrency(value: number, currencySymbol = "ج.م"): string {
