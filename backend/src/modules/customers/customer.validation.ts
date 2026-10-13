@@ -7,6 +7,7 @@ export const createCustomerSchema = Joi.object({
   email: Joi.string().trim().email({ tlds: false }).allow(""),
   address: Joi.string().trim().allow(""),
   openingBalanceAmount: Joi.number().precision(2, { mode: "reject" }).min(0).default(0),
+  openingBalanceDate: Joi.date().iso(),
   openingBalanceSide: Joi.string().valid("they_owe_us", "we_owe_them").default("they_owe_us"),
   isActive: Joi.boolean(),
   notes: Joi.string().trim().allow(""),
