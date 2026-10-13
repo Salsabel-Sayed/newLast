@@ -2,6 +2,7 @@ import PartyListPage from "../../features/parties/PartyListPage";
 import type { PartyConfig } from "../../features/parties/party.types";
 
 const SUPPLIER_CONFIG: PartyConfig = {
+  partyType: "supplier",
   apiBasePath: "/suppliers",
   routeBasePath: "/suppliers",
   singularLabel: "مورد",
