@@ -7,6 +7,7 @@ import { escapeRegex } from "../../shared/utils/escapeRegex.js";
 import { PurchaseOrderModel } from "../purchases/purchase-orders/purchaseOrder.model.js";
 import { PurchaseInvoiceModel } from "../purchases/purchase-invoices/purchaseInvoice.model.js";
 import { ReturnModel } from "../returns/returns/return.model.js";
+import { LedgerEntryModel } from "../finance/ledger/ledgerEntry.model.js";
 import { SupplierModel, type SupplierAttrs } from "./supplier.model.js";
 
 interface ListSuppliersOptions {
@@ -132,5 +133,6 @@ export async function deleteSupplier(id: string): Promise<DeleteOutcome> {
     { model: PurchaseOrderModel, field: "supplierId" },
     { model: PurchaseInvoiceModel, field: "supplierId" },
     { model: ReturnModel, field: "supplierId" },
+    { model: LedgerEntryModel, field: "partyId", filter: { partyType: "supplier" } },
   ]);
 }
