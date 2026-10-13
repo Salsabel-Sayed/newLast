@@ -178,7 +178,7 @@ export function TopCustomersReportView() {
                     <tr key={row.customerId}>
                       <td>{index + 1}</td>
                       <td className="fw-semibold">{row.name}</td>
-                      <td className="text-end">{row.invoiceCount}</td>
+                      <td className="text-end">{formatNumber(row.invoiceCount)}</td>
                       <td className="text-end">{formatCurrency(row.amount)}</td>
                     </tr>
                   ))}
@@ -233,7 +233,7 @@ export function TopSuppliersReportView() {
                     <tr key={row.supplierId}>
                       <td>{index + 1}</td>
                       <td className="fw-semibold">{row.name}</td>
-                      <td className="text-end">{row.invoiceCount}</td>
+                      <td className="text-end">{formatNumber(row.invoiceCount)}</td>
                       <td className="text-end">{formatCurrency(row.amount)}</td>
                     </tr>
                   ))}
