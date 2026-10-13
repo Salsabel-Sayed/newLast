@@ -6,7 +6,7 @@ export const createSupplierSchema = Joi.object({
   phone: Joi.string().trim().allow(""),
   email: Joi.string().trim().email({ tlds: false }).allow(""),
   address: Joi.string().trim().allow(""),
-  openingBalanceAmount: Joi.number().min(0).default(0),
+  openingBalanceAmount: Joi.number().precision(2, { mode: "reject" }).min(0).default(0),
   openingBalanceSide: Joi.string().valid("they_owe_us", "we_owe_them").default("they_owe_us"),
   isActive: Joi.boolean(),
   notes: Joi.string().trim().allow(""),
