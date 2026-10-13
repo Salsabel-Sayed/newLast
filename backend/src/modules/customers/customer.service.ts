@@ -64,8 +64,10 @@ export async function createCustomer(data: CreateCustomerInput) {
     ...customerData
   } = data;
 
-  if (!Number.isFinite(openingBalanceAmount) || openingBalanceAmount < 0) {
-    throw new AppError("قيمة الرصيد الافتتاحي غير صحيحة", 400);
+  const hasMoreThanTwoDecimals =
+    Math.abs(openingBalanceAmount * 100 - Math.round(openingBalanceAmount * 100)) > 1e-7;
+  if (!Number.isFinite(openingBalanceAmount) || openingBalanceAmount < 0 || hasMoreThanTwoDecimals) {
+    throw new AppError("قيمة الرصيد الافتتاحي غير صحيحة (بحد أقصى منزلتين عشريتين)", 400);
   }
 
   return withTransaction(async (session) => {
