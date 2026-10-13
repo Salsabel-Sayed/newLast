@@ -136,7 +136,7 @@ function DashboardPage() {
                     تنبيهات نقص المخزون
                   </span>
                   {data.alerts.lowStockCount > 0 && (
-                    <span className="badge text-bg-warning">{data.alerts.lowStockCount}</span>
+                    <span className="badge text-bg-warning">{formatNumber(data.alerts.lowStockCount)}</span>
                   )}
                 </Card.Header>
                 <Card.Body className="p-0">
