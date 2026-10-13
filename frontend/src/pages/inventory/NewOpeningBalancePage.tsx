@@ -133,7 +133,7 @@ function NewOpeningBalancePage() {
                 <Form.Group>
                   <Form.Label>تاريخ الرصيد الافتتاحي *</Form.Label>
                   <Form.Control
-                    type="date"
+                    type="date" dir="ltr" lang="en-GB"
                     value={openingDate}
                     onChange={(e) => setOpeningDate(e.target.value)}
                   />
@@ -227,7 +227,7 @@ function NewOpeningBalancePage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.packageCount}
@@ -236,7 +236,7 @@ function NewOpeningBalancePage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.kgPerPackage}
@@ -246,7 +246,7 @@ function NewOpeningBalancePage() {
                     <td className="text-end fw-semibold">{formatNumber(rowTotalKg(row))}</td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.totalCost}
@@ -255,7 +255,7 @@ function NewOpeningBalancePage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="date"
+                        type="date" dir="ltr" lang="en-GB"
                         value={row.productionDate}
                         onChange={(e) => updateRow(row.key, { productionDate: e.target.value })}
                       />
