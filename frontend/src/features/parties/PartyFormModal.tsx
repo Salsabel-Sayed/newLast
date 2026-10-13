@@ -8,6 +8,8 @@ const EMPTY_VALUES: PartyFormValues = {
   phone: "",
   email: "",
   address: "",
+  openingBalanceAmount: "0",
+  openingBalanceSide: "they_owe_us",
   isActive: true,
   notes: "",
 };
@@ -19,6 +21,8 @@ function toFormValues(party: Party): PartyFormValues {
     phone: party.phone ?? "",
     email: party.email ?? "",
     address: party.address ?? "",
+    openingBalanceAmount: "0",
+    openingBalanceSide: "they_owe_us",
     isActive: party.isActive,
     notes: party.notes ?? "",
   };
@@ -131,6 +135,37 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                 />
               </Form.Group>
             </div>
+            {!party && (
+              <>
+                <div className="col-6">
+                  <Form.Group>
+                    <Form.Label>الرصيد الافتتاحي</Form.Label>
+                    <Form.Control
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputMode="decimal"
+                      dir="ltr"
+                      value={values.openingBalanceAmount}
+                      onChange={(e) => setValues({ ...values, openingBalanceAmount: e.target.value })}
+                    />
+                    <Form.Text muted>اتركيه 0 لو مفيش رصيد سابق</Form.Text>
+                  </Form.Group>
+                </div>
+                <div className="col-6">
+                  <Form.Group>
+                    <Form.Label>{config.apiBasePath === "/customers" ? "طبيعة الرصيد" : "طبيعة الرصيد"}</Form.Label>
+                    <Form.Select
+                      value={values.openingBalanceSide}
+                      onChange={(e) => setValues({ ...values, openingBalanceSide: e.target.value as PartyFormValues["openingBalanceSide"] })}
+                    >
+                      <option value="they_owe_us">{config.apiBasePath === "/customers" ? "العميل عليه فلوس لنا" : "المورد عليه فلوس لنا"}</option>
+                      <option value="we_owe_them">{config.apiBasePath === "/customers" ? "إحنا علينا فلوس للعميل" : "إحنا علينا فلوس للمورد"}</option>
+                    </Form.Select>
+                  </Form.Group>
+                </div>
+              </>
+            )}
             <div className="col-12">
               <Form.Group>
                 <Form.Label>ملاحظات</Form.Label>
