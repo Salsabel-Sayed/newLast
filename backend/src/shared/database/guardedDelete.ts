@@ -23,7 +23,7 @@ export async function guardedDelete<T extends { isActive: boolean }>(
   for (const dependent of dependents) {
     const hasDependents = await dependent.model.exists({
       [dependent.field]: id,
-      ...dependent.filter,
+      ...(dependent.filter ?? {}),
     });
     if (hasDependents) {
       target.isActive = false;
