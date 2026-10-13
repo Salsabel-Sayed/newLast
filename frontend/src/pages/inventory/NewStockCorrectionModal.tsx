@@ -156,7 +156,7 @@ function NewStockCorrectionModal({ show, submitting, onClose, onSubmit }: NewSto
           <Form.Group className="mb-3">
             <Form.Label>الكمية الصحيحة الجديدة (كجم) *</Form.Label>
             <Form.Control
-              type="number"
+              type="number" dir="ltr" lang="en-US"
               min={0}
               step="any"
               value={quantityAfterKg}
@@ -175,7 +175,7 @@ function NewStockCorrectionModal({ show, submitting, onClose, onSubmit }: NewSto
           <Form.Group className="mb-3">
             <Form.Label>تاريخ التصحيح *</Form.Label>
             <Form.Control
-              type="date"
+              type="date" dir="ltr" lang="en-GB"
               value={correctionDate}
               isInvalid={!!errors.correctionDate}
               onChange={(e) => setCorrectionDate(e.target.value)}
