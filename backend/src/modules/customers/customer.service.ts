@@ -1,4 +1,6 @@
 import { AppError } from "../../middlewares/Errors/appError.js";
+import { withTransaction } from "../../shared/database/withTransaction.js";
+import { recordLedgerEntry } from "../finance/ledger/ledgerEntry.service.js";
 import { guardedDelete, type DeleteOutcome } from "../../shared/database/guardedDelete.js";
 import { buildPaginatedResult } from "../../shared/http/pagination.js";
 import { escapeRegex } from "../../shared/utils/escapeRegex.js";
@@ -47,12 +49,55 @@ export async function getCustomerById(id: string) {
   return customer;
 }
 
-export async function createCustomer(data: Omit<CustomerAttrs, "balance">) {
-  const existing = await CustomerModel.findOne({ code: data.code });
-  if (existing) {
-    throw new AppError("كود العميل مستخدم بالفعل", 409);
+type OpeningBalanceSide = "they_owe_us" | "we_owe_them";
+
+interface CreateCustomerInput extends Omit<CustomerAttrs, "balance"> {
+  openingBalanceAmount?: number;
+  openingBalanceSide?: OpeningBalanceSide;
+}
+
+export async function createCustomer(data: CreateCustomerInput) {
+  const {
+    openingBalanceAmount = 0,
+    openingBalanceSide = "they_owe_us",
+    ...customerData
+  } = data;
+
+  if (!Number.isFinite(openingBalanceAmount) || openingBalanceAmount < 0) {
+    throw new AppError("قيمة الرصيد الافتتاحي غير صحيحة", 400);
   }
-  return CustomerModel.create(data);
+
+  return withTransaction(async (session) => {
+    const existing = await CustomerModel.findOne({ code: customerData.code }).session(session);
+    if (existing) throw new AppError("كود العميل مستخدم بالفعل", 409);
+
+    // Positive customer balance means the customer owes the company.
+    const initialBalance = openingBalanceAmount === 0
+      ? 0
+      : openingBalanceSide === "they_owe_us"
+        ? openingBalanceAmount
+        : -openingBalanceAmount;
+
+    const [customer] = await CustomerModel.create(
+      [{ ...customerData, balance: initialBalance }],
+      { session }
+    );
+    if (!customer) throw new AppError("تعذر إنشاء العميل", 500);
+
+    if (openingBalanceAmount > 0) {
+      await recordLedgerEntry({
+        partyType: "customer",
+        partyId: customer._id,
+        date: new Date(),
+        sourceType: "opening_balance",
+        sourceId: customer._id,
+        description: "رصيد افتتاحي للعميل",
+        debit: initialBalance > 0 ? openingBalanceAmount : 0,
+        credit: initialBalance < 0 ? openingBalanceAmount : 0,
+      }, session);
+    }
+    return customer;
+  });
 }
 
 export async function updateCustomer(
