@@ -54,12 +54,14 @@ type OpeningBalanceSide = "they_owe_us" | "we_owe_them";
 
 interface CreateSupplierInput extends Omit<SupplierAttrs, "balance"> {
   openingBalanceAmount?: number;
+  openingBalanceDate?: Date | string;
   openingBalanceSide?: OpeningBalanceSide;
 }
 
 export async function createSupplier(data: CreateSupplierInput) {
   const {
     openingBalanceAmount = 0,
+    openingBalanceDate,
     openingBalanceSide = "they_owe_us",
     ...supplierData
   } = data;
@@ -68,6 +70,12 @@ export async function createSupplier(data: CreateSupplierInput) {
     Math.abs(openingBalanceAmount * 100 - Math.round(openingBalanceAmount * 100)) > 1e-7;
   if (!Number.isFinite(openingBalanceAmount) || openingBalanceAmount < 0 || hasMoreThanTwoDecimals) {
     throw new AppError("قيمة الرصيد الافتتاحي غير صحيحة (بحد أقصى منزلتين عشريتين)", 400);
+  }
+
+  const effectiveOpeningBalanceDate =
+    openingBalanceDate === undefined ? new Date() : new Date(openingBalanceDate);
+  if (openingBalanceAmount > 0 && Number.isNaN(effectiveOpeningBalanceDate.getTime())) {
+    throw new AppError("تاريخ الرصيد الافتتاحي غير صحيح", 400);
   }
 
   return withTransaction(async (session) => {
@@ -91,7 +99,7 @@ export async function createSupplier(data: CreateSupplierInput) {
       await recordLedgerEntry({
         partyType: "supplier",
         partyId: supplier._id,
-        date: new Date(),
+        date: effectiveOpeningBalanceDate,
         sourceType: "opening_balance",
         sourceId: supplier._id,
         description: "رصيد افتتاحي للمورد",
