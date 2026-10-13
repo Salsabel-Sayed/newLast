@@ -35,6 +35,7 @@ export interface StatementLine {
 }
 
 export interface PartyConfig {
+  partyType: "customer" | "supplier";
   apiBasePath: string;
   routeBasePath: string;
   singularLabel: string;
