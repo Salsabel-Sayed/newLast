@@ -2,7 +2,7 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
 });
 
-const currencyFormatter = new Intl.NumberFormat("ar-EG", {
+const currencyFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
 });
@@ -13,7 +13,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "2-digit",
 });
 
-const dateTimeFormatter = new Intl.DateTimeFormat("ar-EG", {
+const dateTimeFormatter = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
