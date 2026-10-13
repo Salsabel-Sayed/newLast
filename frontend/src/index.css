@@ -1,0 +1,276 @@
+:root {
+  /* Calm, professional ERP palette — muted teal/blue primary instead of Bootstrap's bright default */
+  --bs-primary: #2f5d62;
+  --bs-primary-rgb: 47, 93, 98;
+  --bs-secondary: #6b7280;
+  --bs-secondary-rgb: 107, 114, 128;
+  --bs-success: #3f8f5f;
+  --bs-success-rgb: 63, 143, 95;
+  --bs-danger: #b8433e;
+  --bs-danger-rgb: 184, 67, 62;
+  --bs-warning: #c9922a;
+  --bs-warning-rgb: 201, 146, 42;
+  --bs-info: #3a7ca5;
+  --bs-info-rgb: 58, 124, 165;
+  --bs-light: #f4f6f7;
+  --bs-light-rgb: 244, 246, 247;
+  --bs-body-bg: #c7d3c08d;
+  --bs-body-color: #392c0b;
+  --bs-border-color: #dde2e5;
+
+  --app-sidebar-bg: #8FA28A;
+  --app-sidebar-fg: #FFF2D8;
+  --app-sidebar-active-bg: #8FA28A;
+  --app-sidebar-width: 260px;
+  --app-topbar-height: 64px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    "Segoe UI",
+    Tahoma,
+    "Noto Sans Arabic",
+    Arial,
+    sans-serif;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-hover-bg: #274d51;
+  --bs-btn-hover-border-color: #274d51;
+  --bs-btn-active-bg: #203f42;
+  --bs-btn-active-border-color: #203f42;
+}
+
+.card {
+  border-color: var(--bs-border-color);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.table thead th {
+  font-weight: 600;
+  color: #3c4249;
+  background-color: #eef1f2;
+  border-bottom-width: 1px;
+}
+
+.app-loading-overlay {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- App shell layout ---------- */
+
+.app-shell {
+  display: flex;
+  min-height: 100%;
+}
+
+.app-sidebar {
+  width: var(--app-sidebar-width);
+  flex-shrink: 0;
+  background-color: var(--app-sidebar-bg);
+  color: var(--app-sidebar-fg);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+ 
+}
+
+.app-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.1rem 1.25rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #FFF2D8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-sidebar-brand i {
+  font-size: 1.4rem;
+  color: #e7c98a;
+}
+
+.app-sidebar-nav {
+  flex: 1;
+  padding: 0.6rem 0.6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.app-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--app-sidebar-fg);
+  text-decoration: none;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  background-color: #606a5a
+}
+
+.app-sidebar-link i:first-child {
+  font-size: 1.05rem;
+  width: 1.3rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.app-sidebar-link:hover {
+  background-color: #606a5a7f;
+  color: #fff;
+}
+
+.app-sidebar-link-active {
+  background-color: var(--app-sidebar-active-bg);
+  color: #fff;
+  font-weight: 600;
+}
+
+.app-sidebar-link-active-group {
+  color: #fff;
+}
+
+.app-sidebar-label {
+  flex: 1;
+  text-align: start;
+}
+
+.app-sidebar-chevron {
+  font-size: 0.75rem;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.app-sidebar-chevron-open {
+  transform: rotate(180deg);
+}
+
+.app-sidebar-subitems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-inline-start: 0.5rem;
+  margin-bottom: 0.2rem;
+  margin: 5px 0;
+}
+
+.app-sidebar-sublink {
+  font-size: 0.87rem;
+  padding-inline-start: 1.5rem;
+}
+
+.app-sidebar-backdrop {
+  display: none;
+}
+
+.app-content-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-topbar {
+  height: var(--app-topbar-height);
+  flex-shrink: 0;
+  background-color: #405c4382;
+  border-bottom: 1px solid var(--bs-border-color);
+  border-bottom: 1px solid rgb(189, 186, 186);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0px 6px 11px 0px #65765c8d;
+}
+
+.app-topbar-toggle {
+  display: none;
+  border: none;
+  background: transparent;
+  font-size: 1.4rem;
+  color: var(--bs-body-color);
+  padding: 0.25rem;
+  /* #7c7058 r */ 
+}
+
+.app-topbar-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--bs-body-color);
+}
+
+.app-topbar-date {
+  margin-inline-start: auto;
+  color: #6b7280;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+}
+
+.app-main {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .app-sidebar {
+    position: fixed;
+    inset-inline-start: 0;
+    top: 0;
+    z-index: 1050;
+    transform: translateX(100%);
+    transition: transform 0.2s ease;
+  }
+
+  html[dir="rtl"] .app-sidebar {
+    transform: translateX(100%);
+  }
+
+  .app-sidebar.app-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .app-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.45);
+    z-index: 1040;
+  }
+
+  .app-topbar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-topbar-date {
+    display: none;
+  }
+}
