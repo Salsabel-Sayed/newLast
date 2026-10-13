@@ -206,7 +206,7 @@ export function PurchasesReportView() {
                         {data.byItem.map((row) => (
                           <tr key={row.itemId}>
                             <td>{row.name}</td>
-                            <td className="text-end">{row.qty.toFixed(2)}</td>
+                            <td className="text-end">{formatNumber(row.qty)}</td>
                             <td className="text-end">{formatCurrency(row.amount)}</td>
                           </tr>
                         ))}
