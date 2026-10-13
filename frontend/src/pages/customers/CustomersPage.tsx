@@ -7,7 +7,7 @@ const CUSTOMER_CONFIG: PartyConfig = {
   singularLabel: "عميل",
   pluralLabel: "العملاء",
   icon: "bi-people",
-  balanceLabel: "الرصيد المستحق على العميل",
+  balanceLabel: "الرصيد الحالي للعميل (الموجب: عليه لنا، السالب: له عندنا)",
   debitLabel: "مدين",
   creditLabel: "دائن",
 };
