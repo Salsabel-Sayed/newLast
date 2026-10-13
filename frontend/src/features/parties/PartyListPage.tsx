@@ -72,6 +72,12 @@ function PartyListPage({ config }: PartyListPageProps) {
         address: values.address.trim(),
         isActive: values.isActive,
         notes: values.notes.trim(),
+        ...(!editingParty
+          ? {
+              openingBalanceAmount: Number(values.openingBalanceAmount || 0),
+              openingBalanceSide: values.openingBalanceSide,
+            }
+          : {}),
       };
 
       if (editingParty) {
