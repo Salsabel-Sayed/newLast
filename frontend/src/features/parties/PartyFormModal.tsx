@@ -34,6 +34,7 @@ interface FormErrors {
   code?: string;
   name?: string;
   email?: string;
+  openingBalanceAmount?: string;
 }
 
 function validate(values: PartyFormValues): FormErrors {
@@ -42,6 +43,14 @@ function validate(values: PartyFormValues): FormErrors {
   if (!values.name.trim()) errors.name = "الاسم مطلوب";
   if (values.email.trim() && !EMAIL_PATTERN.test(values.email.trim())) {
     errors.email = "صيغة البريد الإلكتروني غير صحيحة";
+  }
+  if (values.openingBalanceAmount.trim()) {
+    const amount = Number(values.openingBalanceAmount);
+    const hasMoreThanTwoDecimals =
+      Math.abs(amount * 100 - Math.round(amount * 100)) > 1e-7;
+    if (!Number.isFinite(amount) || amount < 0 || hasMoreThanTwoDecimals) {
+      errors.openingBalanceAmount = "أدخلي مبلغًا صحيحًا بحد أقصى منزلتين عشريتين";
+    }
   }
   return errors;
 }
@@ -147,20 +156,22 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                       inputMode="decimal"
                       dir="ltr"
                       value={values.openingBalanceAmount}
+                      isInvalid={!!errors.openingBalanceAmount}
                       onChange={(e) => setValues({ ...values, openingBalanceAmount: e.target.value })}
                     />
+                    <Form.Control.Feedback type="invalid">{errors.openingBalanceAmount}</Form.Control.Feedback>
                     <Form.Text muted>اتركيه 0 لو مفيش رصيد سابق</Form.Text>
                   </Form.Group>
                 </div>
                 <div className="col-6">
                   <Form.Group>
-                    <Form.Label>{config.apiBasePath === "/customers" ? "طبيعة الرصيد" : "طبيعة الرصيد"}</Form.Label>
+                    <Form.Label>طبيعة الرصيد</Form.Label>
                     <Form.Select
                       value={values.openingBalanceSide}
                       onChange={(e) => setValues({ ...values, openingBalanceSide: e.target.value as PartyFormValues["openingBalanceSide"] })}
                     >
-                      <option value="they_owe_us">{config.apiBasePath === "/customers" ? "العميل عليه فلوس لنا" : "المورد عليه فلوس لنا"}</option>
-                      <option value="we_owe_them">{config.apiBasePath === "/customers" ? "إحنا علينا فلوس للعميل" : "إحنا علينا فلوس للمورد"}</option>
+                      <option value="they_owe_us">{config.partyType === "customer" ? "العميل عليه فلوس لنا" : "المورد عليه فلوس لنا"}</option>
+                      <option value="we_owe_them">{config.partyType === "customer" ? "إحنا علينا فلوس للعميل" : "إحنا علينا فلوس للمورد"}</option>
                     </Form.Select>
                   </Form.Group>
                 </div>
