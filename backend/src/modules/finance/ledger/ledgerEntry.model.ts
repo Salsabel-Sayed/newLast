@@ -8,6 +8,7 @@ export const LEDGER_SOURCE_TYPES = [
   "purchase_invoice",
   "collection",
   "payment",
+  "opening_balance",
   "sales_return",
   "purchase_return",
 ] as const;
