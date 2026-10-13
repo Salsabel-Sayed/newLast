@@ -7,7 +7,7 @@ const SUPPLIER_CONFIG: PartyConfig = {
   singularLabel: "مورد",
   pluralLabel: "الموردون",
   icon: "bi-truck",
-  balanceLabel: "المستحق للمورد",
+  balanceLabel: "الرصيد الحالي للمورد (الموجب: علينا له، السالب: لنا عنده)",
   debitLabel: "مدين",
   creditLabel: "دائن",
 };
