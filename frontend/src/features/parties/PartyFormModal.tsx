@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import type { Party, PartyConfig, PartyFormValues } from "./party.types";
 
+function getLocalDateInputValue(): string {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return [year, month, day].join("-");
+}
+
 const EMPTY_VALUES: PartyFormValues = {
   code: "",
   name: "",
@@ -9,6 +17,7 @@ const EMPTY_VALUES: PartyFormValues = {
   email: "",
   address: "",
   openingBalanceAmount: "0",
+  openingBalanceDate: getLocalDateInputValue(),
   openingBalanceSide: "they_owe_us",
   isActive: true,
   notes: "",
@@ -22,6 +31,7 @@ function toFormValues(party: Party): PartyFormValues {
     email: party.email ?? "",
     address: party.address ?? "",
     openingBalanceAmount: "0",
+    openingBalanceDate: getLocalDateInputValue(),
     openingBalanceSide: "they_owe_us",
     isActive: party.isActive,
     notes: party.notes ?? "",
@@ -35,6 +45,7 @@ interface FormErrors {
   name?: string;
   email?: string;
   openingBalanceAmount?: string;
+  openingBalanceDate?: string;
 }
 
 function validate(values: PartyFormValues): FormErrors {
@@ -50,6 +61,9 @@ function validate(values: PartyFormValues): FormErrors {
       Math.abs(amount * 100 - Math.round(amount * 100)) > 1e-7;
     if (!Number.isFinite(amount) || amount < 0 || hasMoreThanTwoDecimals) {
       errors.openingBalanceAmount = "أدخلي مبلغًا صحيحًا بحد أقصى منزلتين عشريتين";
+    }
+    if (amount > 0 && !values.openingBalanceDate) {
+      errors.openingBalanceDate = "تاريخ الرصيد الافتتاحي مطلوب عند إدخال مبلغ";
     }
   }
   return errors;
@@ -70,7 +84,7 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
 
   useEffect(() => {
     if (show) {
-      setValues(party ? toFormValues(party) : EMPTY_VALUES);
+      setValues(party ? toFormValues(party) : { ...EMPTY_VALUES, openingBalanceDate: getLocalDateInputValue() });
       setErrors({});
     }
   }, [show, party]);
@@ -176,6 +190,23 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                   </Form.Group>
                 </div>
               </>
+            )}
+            {!party && (
+              <div className="col-6">
+                <Form.Group>
+                  <Form.Label>تاريخ الرصيد الافتتاحي</Form.Label>
+                  <Form.Control
+                    type="date"
+                    lang="en-GB"
+                    dir="ltr"
+                    value={values.openingBalanceDate}
+                    isInvalid={!!errors.openingBalanceDate}
+                    onChange={(e) => setValues({ ...values, openingBalanceDate: e.target.value })}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.openingBalanceDate}</Form.Control.Feedback>
+                  <Form.Text muted>تاريخ بدء الرصيد في كشف الحساب</Form.Text>
+                </Form.Group>
+              </div>
             )}
             <div className="col-12">
               <Form.Group>
