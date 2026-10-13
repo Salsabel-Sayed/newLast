@@ -468,14 +468,14 @@ function SalesOrderFormPage() {
               <div className="col-md-3">
                 <Form.Group>
                   <Form.Label>تاريخ الأمر *</Form.Label>
-                  <Form.Control type="date" value={orderDate} onChange={(e) => setOrderDate(e.target.value)} />
+                  <Form.Control type="date" dir="ltr" lang="en-GB" value={orderDate} onChange={(e) => setOrderDate(e.target.value)} />
                 </Form.Group>
               </div>
               <div className="col-md-3">
                 <Form.Group>
                   <Form.Label>تاريخ التسليم المتوقع</Form.Label>
                   <Form.Control
-                    type="date"
+                    type="date" dir="ltr" lang="en-GB"
                     value={expectedDeliveryDate}
                     onChange={(e) => setExpectedDeliveryDate(e.target.value)}
                   />
@@ -569,7 +569,7 @@ function SalesOrderFormPage() {
                   <Form.Group>
                     <Form.Label>الكمية (كجم) *</Form.Label>
                     <Form.Control
-                      type="number"
+                      type="number" dir="ltr" lang="en-US"
                       min={0}
                       step="any"
                       value={row.quantityKg}
@@ -581,7 +581,7 @@ function SalesOrderFormPage() {
                   <Form.Group>
                     <Form.Label>سعر الوحدة *</Form.Label>
                     <Form.Control
-                      type="number"
+                      type="number" dir="ltr" lang="en-US"
                       min={0}
                       step="any"
                       value={row.unitPrice}
@@ -608,7 +608,7 @@ function SalesOrderFormPage() {
                   <Form.Group>
                     <Form.Label>قيمة الخصم</Form.Label>
                     <Form.Control
-                      type="number"
+                      type="number" dir="ltr" lang="en-US"
                       min={0}
                       step="any"
                       disabled={row.discountMode === "none"}
@@ -647,7 +647,7 @@ function SalesOrderFormPage() {
                       <div className="col-4">
                         <Form.Control
                           size="sm"
-                          type="number"
+                          type="number" dir="ltr" lang="en-US"
                           min={0}
                           step="any"
                           placeholder="جرام"
