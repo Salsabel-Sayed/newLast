@@ -37,3 +37,8 @@ jobs:
       - name: TypeScript check and build
         working-directory: ${{ matrix.project }}
         run: npm run build
+
+      - name: Frontend lint
+        if: matrix.project == 'frontend'
+        working-directory: frontend
+        run: npm run lint
