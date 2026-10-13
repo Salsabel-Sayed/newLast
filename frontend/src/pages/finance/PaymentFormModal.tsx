@@ -140,7 +140,7 @@ function PaymentFormModal({ show, direction, submitting, onClose, onSubmit }: Pa
           <Form.Group className="mb-3">
             <Form.Label>المبلغ *</Form.Label>
             <Form.Control
-              type="number"
+              type="number" dir="ltr" lang="en-US"
               min={0}
               step="any"
               value={amount}
@@ -152,7 +152,7 @@ function PaymentFormModal({ show, direction, submitting, onClose, onSubmit }: Pa
 
           <Form.Group className="mb-3">
             <Form.Label>التاريخ *</Form.Label>
-            <Form.Control type="date" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} />
+            <Form.Control type="date" dir="ltr" lang="en-GB" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} />
           </Form.Group>
 
           <Form.Group>
