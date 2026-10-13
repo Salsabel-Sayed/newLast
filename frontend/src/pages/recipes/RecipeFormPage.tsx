@@ -239,7 +239,7 @@ function RecipeFormPage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.gramsPerKg}
