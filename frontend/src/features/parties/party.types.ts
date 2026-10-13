@@ -18,6 +18,8 @@ export interface PartyFormValues {
   phone: string;
   email: string;
   address: string;
+  openingBalanceAmount: string;
+  openingBalanceSide: "they_owe_us" | "we_owe_them";
   isActive: boolean;
   notes: string;
 }
