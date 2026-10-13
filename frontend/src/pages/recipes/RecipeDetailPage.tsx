@@ -7,7 +7,7 @@ import ErrorState from "../../components/common/ErrorState";
 import StatusBadge from "../../components/common/StatusBadge";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useLookupList } from "../../hooks/useLookupList";
-import { formatCurrency, formatNumber } from "../../utils/format";
+import { formatCurrency, formatNumber, formatPercent } from "../../utils/format";
 import type { Category } from "../../features/categories/category.types";
 import type { EstimatedCost, Recipe } from "./recipe.types";
 
@@ -84,7 +84,7 @@ function RecipeDetailPage() {
                       <div className="text-muted small">{component.rawMaterialCode}</div>
                     </td>
                     <td className="text-end">{formatNumber(component.gramsPerKg)}</td>
-                    <td className="text-end text-muted">{(component.gramsPerKg / 10).toFixed(1)}%</td>
+                    <td className="text-end text-muted">{formatPercent(component.gramsPerKg / 10)}%</td>
                     {!costResource.loading && !costResource.error && costResource.data && (
                       <>
                         <td className="text-end">{formatCurrency(costComponent?.averageCostPerKg ?? 0)}</td>
