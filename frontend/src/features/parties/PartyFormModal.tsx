@@ -165,6 +165,7 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                     <Form.Label>الرصيد الافتتاحي</Form.Label>
                     <Form.Control
                       type="number"
+                      lang="en-US"
                       min="0"
                       step="0.01"
                       inputMode="decimal"
