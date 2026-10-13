@@ -7,6 +7,7 @@ import { escapeRegex } from "../../shared/utils/escapeRegex.js";
 import { SalesOrderModel } from "../sales/sales-orders/salesOrder.model.js";
 import { SalesInvoiceModel } from "../sales/sales-invoices/salesInvoice.model.js";
 import { ReturnModel } from "../returns/returns/return.model.js";
+import { LedgerEntryModel } from "../finance/ledger/ledgerEntry.model.js";
 import { CustomerModel, type CustomerAttrs } from "./customer.model.js";
 
 interface ListCustomersOptions {
@@ -132,5 +133,6 @@ export async function deleteCustomer(id: string): Promise<DeleteOutcome> {
     { model: SalesOrderModel, field: "customerId" },
     { model: SalesInvoiceModel, field: "customerId" },
     { model: ReturnModel, field: "customerId" },
+    { model: LedgerEntryModel, field: "partyId", filter: { partyType: "customer" } },
   ]);
 }
