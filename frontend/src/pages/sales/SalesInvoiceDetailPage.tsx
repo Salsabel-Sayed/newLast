@@ -6,7 +6,7 @@ import LoadingState from "../../components/common/LoadingState";
 import ErrorState from "../../components/common/ErrorState";
 import StatusBadge from "../../components/common/StatusBadge";
 import { useApiResource } from "../../hooks/useApiResource";
-import { formatCurrency, formatDate } from "../../utils/format";
+import { formatCurrency, formatDate, formatNumber } from "../../utils/format";
 import { computeReturnStatus } from "../returns/return.types";
 import { useLinkedReturns } from "../returns/useLinkedReturns";
 import LinkedReturnsSection from "../returns/LinkedReturnsSection";
@@ -101,7 +101,7 @@ function SalesInvoiceDetailPage() {
                 <tr key={index}>
                   <td className="fw-semibold">{itemDisplayName(item)}</td>
                   <td className="text-muted small">{ITEM_TYPE_LABELS[item.itemType]}</td>
-                  <td className="text-end">{item.quantityKg.toFixed(2)}</td>
+                  <td className="text-end">{formatNumber(item.quantityKg)}</td>
                   <td className="text-end text-muted">{formatCurrency(item.costPerKg)}</td>
                   <td className="text-end">{formatCurrency(item.unitPrice)}</td>
                   <td className="text-end">{item.discountAmount > 0 ? formatCurrency(item.discountAmount) : "—"}</td>
