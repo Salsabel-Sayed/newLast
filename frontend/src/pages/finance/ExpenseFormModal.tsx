@@ -89,7 +89,7 @@ function ExpenseFormModal({ show, expense, submitting, onClose, onSubmit }: Expe
               <Form.Group>
                 <Form.Label>المبلغ *</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="number" dir="ltr" lang="en-US"
                   min={0}
                   step="any"
                   value={values.amount}
@@ -103,7 +103,7 @@ function ExpenseFormModal({ show, expense, submitting, onClose, onSubmit }: Expe
               <Form.Group>
                 <Form.Label>تاريخ المصروف *</Form.Label>
                 <Form.Control
-                  type="date"
+                  type="date" dir="ltr" lang="en-GB"
                   value={values.expenseDate}
                   onChange={(e) => setValues({ ...values, expenseDate: e.target.value })}
                 />
