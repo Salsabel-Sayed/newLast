@@ -26,9 +26,19 @@ export const updateSupplierSchema = Joi.object({
   phone: Joi.string().trim().allow(""),
   email: Joi.string().trim().email({ tlds: false }).allow(""),
   address: Joi.string().trim().allow(""),
+  openingBalanceAmount: Joi.number()
+    .min(0)
+    .custom((value, helpers) =>
+      Math.abs(value * 100 - Math.round(value * 100)) > 1e-7
+        ? helpers.error("number.precision", { limit: 2 })
+        : value
+    ),
+  openingBalanceSide: Joi.string().valid("they_owe_us", "we_owe_them"),
   isActive: Joi.boolean(),
   notes: Joi.string().trim().allow(""),
-}).min(1);
+})
+  .and("openingBalanceAmount", "openingBalanceSide")
+  .min(1);
 
 export const listSuppliersQuerySchema = Joi.object({
   search: Joi.string().trim().allow(""),
