@@ -1,10 +1,13 @@
 import { AppError } from "../../middlewares/Errors/appError.js";
+import { withTransaction } from "../../shared/database/withTransaction.js";
+import { recordLedgerEntry } from "../finance/ledger/ledgerEntry.service.js";
 import { guardedDelete, type DeleteOutcome } from "../../shared/database/guardedDelete.js";
 import { buildPaginatedResult } from "../../shared/http/pagination.js";
 import { escapeRegex } from "../../shared/utils/escapeRegex.js";
 import { PurchaseOrderModel } from "../purchases/purchase-orders/purchaseOrder.model.js";
 import { PurchaseInvoiceModel } from "../purchases/purchase-invoices/purchaseInvoice.model.js";
 import { ReturnModel } from "../returns/returns/return.model.js";
+import { LedgerEntryModel } from "../finance/ledger/ledgerEntry.model.js";
 import { SupplierModel, type SupplierAttrs } from "./supplier.model.js";
 
 interface ListSuppliersOptions {
@@ -47,12 +50,65 @@ export async function getSupplierById(id: string) {
   return supplier;
 }
 
-export async function createSupplier(data: Omit<SupplierAttrs, "balance">) {
-  const existing = await SupplierModel.findOne({ code: data.code });
-  if (existing) {
-    throw new AppError("كود المورد مستخدم بالفعل", 409);
+type OpeningBalanceSide = "they_owe_us" | "we_owe_them";
+
+interface CreateSupplierInput extends Omit<SupplierAttrs, "balance"> {
+  openingBalanceAmount?: number;
+  openingBalanceDate?: Date | string;
+  openingBalanceSide?: OpeningBalanceSide;
+}
+
+export async function createSupplier(data: CreateSupplierInput) {
+  const {
+    openingBalanceAmount = 0,
+    openingBalanceDate,
+    openingBalanceSide = "they_owe_us",
+    ...supplierData
+  } = data;
+
+  const hasMoreThanTwoDecimals =
+    Math.abs(openingBalanceAmount * 100 - Math.round(openingBalanceAmount * 100)) > 1e-7;
+  if (!Number.isFinite(openingBalanceAmount) || openingBalanceAmount < 0 || hasMoreThanTwoDecimals) {
+    throw new AppError("قيمة الرصيد الافتتاحي غير صحيحة (بحد أقصى منزلتين عشريتين)", 400);
   }
-  return SupplierModel.create(data);
+
+  const effectiveOpeningBalanceDate =
+    openingBalanceDate === undefined ? new Date() : new Date(openingBalanceDate);
+  if (openingBalanceAmount > 0 && Number.isNaN(effectiveOpeningBalanceDate.getTime())) {
+    throw new AppError("تاريخ الرصيد الافتتاحي غير صحيح", 400);
+  }
+
+  return withTransaction(async (session) => {
+    const existing = await SupplierModel.findOne({ code: supplierData.code }).session(session);
+    if (existing) throw new AppError("كود المورد مستخدم بالفعل", 409);
+
+    // Positive supplier balance means the company owes the supplier.
+    const initialBalance = openingBalanceAmount === 0
+      ? 0
+      : openingBalanceSide === "we_owe_them"
+        ? openingBalanceAmount
+        : -openingBalanceAmount;
+
+    const [supplier] = await SupplierModel.create(
+      [{ ...supplierData, balance: initialBalance }],
+      { session }
+    );
+    if (!supplier) throw new AppError("تعذر إنشاء المورد", 500);
+
+    if (openingBalanceAmount > 0) {
+      await recordLedgerEntry({
+        partyType: "supplier",
+        partyId: supplier._id,
+        date: effectiveOpeningBalanceDate,
+        sourceType: "opening_balance",
+        sourceId: supplier._id,
+        description: "رصيد افتتاحي للمورد",
+        debit: initialBalance < 0 ? openingBalanceAmount : 0,
+        credit: initialBalance > 0 ? openingBalanceAmount : 0,
+      }, session);
+    }
+    return supplier;
+  });
 }
 
 export async function updateSupplier(
@@ -87,5 +143,6 @@ export async function deleteSupplier(id: string): Promise<DeleteOutcome> {
     { model: PurchaseOrderModel, field: "supplierId" },
     { model: PurchaseInvoiceModel, field: "supplierId" },
     { model: ReturnModel, field: "supplierId" },
+    { model: LedgerEntryModel, field: "partyId", filter: { partyType: "supplier" } },
   ]);
 }

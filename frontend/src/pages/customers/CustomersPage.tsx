@@ -2,12 +2,13 @@ import PartyListPage from "../../features/parties/PartyListPage";
 import type { PartyConfig } from "../../features/parties/party.types";
 
 const CUSTOMER_CONFIG: PartyConfig = {
+  partyType: "customer",
   apiBasePath: "/customers",
   routeBasePath: "/customers",
   singularLabel: "عميل",
   pluralLabel: "العملاء",
   icon: "bi-people",
-  balanceLabel: "الرصيد المستحق على العميل",
+  balanceLabel: "الرصيد الحالي للعميل (الموجب: عليه لنا، السالب: له عندنا)",
   debitLabel: "مدين",
   creditLabel: "دائن",
 };

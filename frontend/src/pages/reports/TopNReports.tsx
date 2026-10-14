@@ -22,7 +22,7 @@ function LimitFilter({ limit, onChange }: { limit: string; onChange: (value: str
   return (
     <Form.Group style={{ maxWidth: 110 }}>
       <Form.Label className="small text-muted mb-1">عدد النتائج</Form.Label>
-      <Form.Control type="number" size="sm" min={1} max={100} value={limit} onChange={(e) => onChange(e.target.value)} />
+      <Form.Control type="number" dir="ltr" lang="en-US" size="sm" min={1} max={100} value={limit} onChange={(e) => onChange(e.target.value)} />
     </Form.Group>
   );
 }
@@ -178,7 +178,7 @@ export function TopCustomersReportView() {
                     <tr key={row.customerId}>
                       <td>{index + 1}</td>
                       <td className="fw-semibold">{row.name}</td>
-                      <td className="text-end">{row.invoiceCount}</td>
+                      <td className="text-end">{formatNumber(row.invoiceCount)}</td>
                       <td className="text-end">{formatCurrency(row.amount)}</td>
                     </tr>
                   ))}
@@ -233,7 +233,7 @@ export function TopSuppliersReportView() {
                     <tr key={row.supplierId}>
                       <td>{index + 1}</td>
                       <td className="fw-semibold">{row.name}</td>
-                      <td className="text-end">{row.invoiceCount}</td>
+                      <td className="text-end">{formatNumber(row.invoiceCount)}</td>
                       <td className="text-end">{formatCurrency(row.amount)}</td>
                     </tr>
                   ))}

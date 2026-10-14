@@ -4,6 +4,7 @@ import { AppError } from "../../middlewares/Errors/appError.js";
 interface DependentCheck {
   model: Model<any>;
   field: string;
+  filter?: Record<string, unknown>;
 }
 
 export type DeleteOutcome = "deleted" | "disabled";
@@ -22,6 +23,7 @@ export async function guardedDelete<T extends { isActive: boolean }>(
   for (const dependent of dependents) {
     const hasDependents = await dependent.model.exists({
       [dependent.field]: id,
+      ...(dependent.filter ?? {}),
     });
     if (hasDependents) {
       target.isActive = false;

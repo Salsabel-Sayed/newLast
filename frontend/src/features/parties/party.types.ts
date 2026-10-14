@@ -18,6 +18,9 @@ export interface PartyFormValues {
   phone: string;
   email: string;
   address: string;
+  openingBalanceAmount: string;
+  openingBalanceDate: string;
+  openingBalanceSide: "they_owe_us" | "we_owe_them";
   isActive: boolean;
   notes: string;
 }
@@ -33,6 +36,7 @@ export interface StatementLine {
 }
 
 export interface PartyConfig {
+  partyType: "customer" | "supplier";
   apiBasePath: string;
   routeBasePath: string;
   singularLabel: string;

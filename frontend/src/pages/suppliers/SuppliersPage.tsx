@@ -2,12 +2,13 @@ import PartyListPage from "../../features/parties/PartyListPage";
 import type { PartyConfig } from "../../features/parties/party.types";
 
 const SUPPLIER_CONFIG: PartyConfig = {
+  partyType: "supplier",
   apiBasePath: "/suppliers",
   routeBasePath: "/suppliers",
   singularLabel: "مورد",
   pluralLabel: "الموردون",
   icon: "bi-truck",
-  balanceLabel: "المستحق للمورد",
+  balanceLabel: "الرصيد الحالي للمورد (الموجب: علينا له، السالب: لنا عنده)",
   debitLabel: "مدين",
   creditLabel: "دائن",
 };

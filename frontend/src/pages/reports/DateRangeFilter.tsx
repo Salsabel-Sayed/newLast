@@ -12,11 +12,11 @@ function DateRangeFilter({ dateFrom, dateTo, onChangeFrom, onChangeTo }: DateRan
     <>
       <Form.Group style={{ maxWidth: 170 }}>
         <Form.Label className="small text-muted mb-1">من تاريخ</Form.Label>
-        <Form.Control type="date" size="sm" value={dateFrom} onChange={(e) => onChangeFrom(e.target.value)} />
+        <Form.Control type="date" dir="ltr" lang="en-GB" size="sm" value={dateFrom} onChange={(e) => onChangeFrom(e.target.value)} />
       </Form.Group>
       <Form.Group style={{ maxWidth: 170 }}>
         <Form.Label className="small text-muted mb-1">إلى تاريخ</Form.Label>
-        <Form.Control type="date" size="sm" value={dateTo} onChange={(e) => onChangeTo(e.target.value)} />
+        <Form.Control type="date" dir="ltr" lang="en-GB" size="sm" value={dateTo} onChange={(e) => onChangeTo(e.target.value)} />
       </Form.Group>
     </>
   );

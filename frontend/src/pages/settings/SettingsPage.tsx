@@ -159,7 +159,7 @@ function SettingsPage() {
                 <Form.Group>
                   <Form.Label>نسبة الضريبة الافتراضية (%)</Form.Label>
                   <Form.Control
-                    type="number"
+                    type="number" dir="ltr" lang="en-US"
                     min={0}
                     max={100}
                     step="any"

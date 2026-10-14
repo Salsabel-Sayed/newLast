@@ -131,7 +131,7 @@ function RawMaterialFormModal({
               <Form.Group>
                 <Form.Label>حد الطلب الأدنى (كجم)</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="number" dir="ltr" lang="en-US"
                   min={0}
                   step="any"
                   value={values.minStockLevel}

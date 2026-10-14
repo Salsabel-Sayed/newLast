@@ -197,7 +197,7 @@ function PurchaseOrderFormPage() {
               <div className="col-md-3">
                 <Form.Group>
                   <Form.Label>تاريخ الشراء *</Form.Label>
-                  <Form.Control type="date" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
+                  <Form.Control type="date" dir="ltr" lang="en-GB" value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
                 </Form.Group>
               </div>
               <div className="col-md-4">
@@ -269,7 +269,7 @@ function PurchaseOrderFormPage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.packageCount}
@@ -278,7 +278,7 @@ function PurchaseOrderFormPage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.kgPerPackage}
@@ -288,7 +288,7 @@ function PurchaseOrderFormPage() {
                     <td className="text-end fw-semibold">{formatNumber(rowTotalKg(row))}</td>
                     <td>
                       <Form.Control
-                        type="number"
+                        type="number" dir="ltr" lang="en-US"
                         min={0}
                         step="any"
                         value={row.totalCost}
@@ -297,7 +297,7 @@ function PurchaseOrderFormPage() {
                     </td>
                     <td>
                       <Form.Control
-                        type="date"
+                        type="date" dir="ltr" lang="en-GB"
                         value={row.productionDate}
                         onChange={(e) => updateRow(row.key, { productionDate: e.target.value })}
                       />

@@ -13,7 +13,7 @@ import { useConfirm } from "../../components/common/ConfirmProvider";
 import { useToast } from "../../components/common/ToastProvider";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useLookupList } from "../../hooks/useLookupList";
-import { formatCurrency, formatDate } from "../../utils/format";
+import { formatCurrency, formatDate, formatNumber } from "../../utils/format";
 import type { Party } from "../../features/parties/party.types";
 import { PURCHASE_ORDER_STATUS_LABELS, type PurchaseOrder } from "./purchaseOrder.types";
 
@@ -137,7 +137,7 @@ function PurchaseOrdersPage() {
                       </td>
                       <td>{order.supplierName}</td>
                       <td>{formatDate(order.purchaseDate)}</td>
-                      <td className="text-end">{order.totalKg.toFixed(2)}</td>
+                      <td className="text-end">{formatNumber(order.totalKg)}</td>
                       <td className="text-end">{formatCurrency(order.totalAmount)}</td>
                       <td>
                         <StatusBadge label={statusMeta.label} variant={statusMeta.variant} />

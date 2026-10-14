@@ -6,7 +6,7 @@ import ErrorState from "../../components/common/ErrorState";
 import EmptyState from "../../components/common/EmptyState";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useLookupList } from "../../hooks/useLookupList";
-import { formatCurrency, formatDate } from "../../utils/format";
+import { formatCurrency, formatDate, formatNumber } from "../../utils/format";
 import type { Party } from "../../features/parties/party.types";
 import DateRangeFilter from "./DateRangeFilter";
 import type {
@@ -111,7 +111,7 @@ export function SalesReportView() {
                         {data.byItem.map((row) => (
                           <tr key={row.itemId}>
                             <td>{row.name}</td>
-                            <td className="text-end">{row.qty.toFixed(2)}</td>
+                            <td className="text-end">{formatNumber(row.qty)}</td>
                             <td className="text-end">{formatCurrency(row.amount)}</td>
                           </tr>
                         ))}
@@ -206,7 +206,7 @@ export function PurchasesReportView() {
                         {data.byItem.map((row) => (
                           <tr key={row.itemId}>
                             <td>{row.name}</td>
-                            <td className="text-end">{row.qty.toFixed(2)}</td>
+                            <td className="text-end">{formatNumber(row.qty)}</td>
                             <td className="text-end">{formatCurrency(row.amount)}</td>
                           </tr>
                         ))}

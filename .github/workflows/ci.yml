@@ -1,0 +1,44 @@
+name: TypeScript and build checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Frontend TypeScript and Vite build
+            project: frontend
+          - name: Backend TypeScript build
+            project: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.project }}
+        run: npm ci
+
+      - name: TypeScript check and build
+        working-directory: ${{ matrix.project }}
+        run: npm run build
+
+      - name: Frontend lint
+        if: matrix.project == 'frontend'
+        working-directory: frontend
+        run: npm run lint

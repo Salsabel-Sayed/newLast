@@ -6,7 +6,7 @@ import LoadingState from "../../components/common/LoadingState";
 import ErrorState from "../../components/common/ErrorState";
 import StatusBadge from "../../components/common/StatusBadge";
 import { useApiResource } from "../../hooks/useApiResource";
-import { formatCurrency, formatDate } from "../../utils/format";
+import { formatCurrency, formatDate, formatNumber } from "../../utils/format";
 import { PACKAGE_TYPE_LABELS } from "../../features/inventory/packageTypes";
 import { computeReturnStatus } from "../returns/return.types";
 import { useLinkedReturns } from "../returns/useLinkedReturns";
@@ -97,7 +97,7 @@ function PurchaseInvoiceDetailPage() {
                     <div className="text-muted small">{item.rawMaterialCode}</div>
                   </td>
                   <td>{item.packageType === "custom" ? item.customPackageName : PACKAGE_TYPE_LABELS[item.packageType]}</td>
-                  <td className="text-end">{item.totalKg.toFixed(2)}</td>
+                  <td className="text-end">{formatNumber(item.totalKg)}</td>
                   <td className="text-end">{formatCurrency(item.unitCostPerKg)}</td>
                   <td className="text-end">{formatCurrency(item.totalCost)}</td>
                 </tr>

@@ -3,6 +3,7 @@ export const LEDGER_SOURCE_TYPE_LABELS: Record<string, string> = {
   purchase_invoice: "فاتورة شراء",
   collection: "تحصيل",
   payment: "دفعة لمورد",
+  opening_balance: "رصيد افتتاحي",
   sales_return: "مرتجع بيع",
   purchase_return: "مرتجع شراء",
 };

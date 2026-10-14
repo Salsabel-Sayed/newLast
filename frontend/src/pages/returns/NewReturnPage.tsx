@@ -293,7 +293,7 @@ function NewReturnPage() {
               <div className="col-md-3">
                 <Form.Group>
                   <Form.Label>تاريخ المرتجع *</Form.Label>
-                  <Form.Control type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} />
+                  <Form.Control type="date" dir="ltr" lang="en-GB" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} />
                 </Form.Group>
               </div>
               <div className="col-md-5">
@@ -397,7 +397,7 @@ function NewReturnPage() {
                         </td>
                         <td>
                           <Form.Control
-                            type="number"
+                            type="number" dir="ltr" lang="en-US"
                             min={0}
                             step="any"
                             value={row.quantityKg}
@@ -473,7 +473,7 @@ function NewReturnPage() {
                         </td>
                         <td>
                           <Form.Control
-                            type="number"
+                            type="number" dir="ltr" lang="en-US"
                             min={0}
                             step="any"
                             value={row.quantityKg}
@@ -610,7 +610,7 @@ function NewReturnPage() {
                         </td>
                         <td>
                           <Form.Control
-                            type="number"
+                            type="number" dir="ltr" lang="en-US"
                             min={0}
                             step="any"
                             value={row.quantityKg}
