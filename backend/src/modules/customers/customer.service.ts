@@ -189,6 +189,17 @@ export async function updateCustomer(id: string, data: UpdateCustomerInput) {
     }
   }
 
+  if (!openingBalanceProvided) {
+    const customer = await CustomerModel.findByIdAndUpdate(id, profileData, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    if (!customer) {
+      throw new AppError("العميل غير موجود", 404);
+    }
+    return customer;
+  }
+
   return withTransaction(async (session) => {
     const customer = await CustomerModel.findById(id).session(session);
     if (!customer) {
