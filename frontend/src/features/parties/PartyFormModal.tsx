@@ -158,8 +158,7 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                 />
               </Form.Group>
             </div>
-            <>
-                <div className="col-6">
+            <div className="col-6">
                   <Form.Group>
                     <Form.Label>{party ? "تعديل الرصيد الافتتاحي" : "الرصيد الافتتاحي"}</Form.Label>
                     <Form.Control
