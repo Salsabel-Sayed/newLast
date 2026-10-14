@@ -189,6 +189,17 @@ export async function updateSupplier(id: string, data: UpdateSupplierInput) {
     }
   }
 
+  if (!openingBalanceProvided) {
+    const supplier = await SupplierModel.findByIdAndUpdate(id, profileData, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    if (!supplier) {
+      throw new AppError("المورد غير موجود", 404);
+    }
+    return supplier;
+  }
+
   return withTransaction(async (session) => {
     const supplier = await SupplierModel.findById(id).session(session);
     if (!supplier) {
