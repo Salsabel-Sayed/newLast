@@ -83,10 +83,10 @@ export async function getSupplierById(id: string) {
   }
   const [partyWithOpeningBalance] = await attachOpeningBalanceDetails("supplier", [supplier]);
   return partyWithOpeningBalance;
+}
 
-type OpeningBalanceSide = "they_owe_us" | "we_owe_them";
 
-interface CreateSupplierInput extends Omit<SupplierAttrs, "balance"> {
+interface CreateSupplierInput extends Omit<SupplierAttrs, "balance" | "openingBalanceAmount" | "openingBalanceSide" | "openingBalanceDate"> {
   openingBalanceAmount?: number;
   openingBalanceDate?: Date | string;
   openingBalanceSide?: OpeningBalanceSide;
