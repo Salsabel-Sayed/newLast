@@ -4,6 +4,7 @@ export const LEDGER_SOURCE_TYPE_LABELS: Record<string, string> = {
   collection: "تحصيل",
   payment: "دفعة لمورد",
   opening_balance: "رصيد افتتاحي",
+  opening_balance_adjustment: "تعديل رصيد افتتاحي",
   sales_return: "مرتجع بيع",
   purchase_return: "مرتجع شراء",
 };

@@ -30,9 +30,9 @@ function toFormValues(party: Party): PartyFormValues {
     phone: party.phone ?? "",
     email: party.email ?? "",
     address: party.address ?? "",
-    openingBalanceAmount: "0",
-    openingBalanceDate: getLocalDateInputValue(),
-    openingBalanceSide: "they_owe_us",
+    openingBalanceAmount: String(party.openingBalanceAmount ?? 0),
+    openingBalanceDate: party.openingBalanceDate?.slice(0, 10) ?? getLocalDateInputValue(),
+    openingBalanceSide: party.openingBalanceSide ?? "they_owe_us",
     isActive: party.isActive,
     notes: party.notes ?? "",
   };
@@ -158,11 +158,9 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                 />
               </Form.Group>
             </div>
-            {!party && (
-              <>
-                <div className="col-6">
+            <div className="col-6">
                   <Form.Group>
-                    <Form.Label>الرصيد الافتتاحي</Form.Label>
+                    <Form.Label>{party ? "تعديل الرصيد الافتتاحي" : "الرصيد الافتتاحي"}</Form.Label>
                     <Form.Control
                       type="number"
                       lang="en-US"
@@ -175,7 +173,11 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                       onChange={(e) => setValues({ ...values, openingBalanceAmount: e.target.value })}
                     />
                     <Form.Control.Feedback type="invalid">{errors.openingBalanceAmount}</Form.Control.Feedback>
-                    <Form.Text muted>اتركيه 0 لو مفيش رصيد سابق</Form.Text>
+                    <Form.Text muted>
+                      {party
+                        ? "التعديل هيسجل تسوية جديدة في كشف الحساب ويحافظ على القيود السابقة"
+                        : "اتركيه 0 لو مفيش رصيد سابق"}
+                    </Form.Text>
                   </Form.Group>
                 </div>
                 <div className="col-6">
@@ -190,8 +192,6 @@ function PartyFormModal({ show, config, party, submitting, onClose, onSubmit }: 
                     </Form.Select>
                   </Form.Group>
                 </div>
-              </>
-            )}
             {!party && (
               <div className="col-6">
                 <Form.Group>

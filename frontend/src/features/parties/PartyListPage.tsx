@@ -13,10 +13,19 @@ import { useConfirm } from "../../components/common/ConfirmProvider";
 import { useToast } from "../../components/common/ToastProvider";
 import { useApiResource } from "../../hooks/useApiResource";
 import { formatCurrency } from "../../utils/format";
-import type { Party, PartyConfig, PartyFormValues } from "./party.types";
+import type {
+  Party,
+  PartyBalanceSummary,
+  PartyConfig,
+  PartyFormValues,
+} from "./party.types";
 import PartyFormModal from "./PartyFormModal";
 
 const UNEXPECTED_ERROR_MESSAGE = "حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى";
+
+interface PartyListResult extends PaginatedResult<Party> {
+  summary: PartyBalanceSummary;
+}
 
 interface PartyListPageProps {
   config: PartyConfig;
@@ -36,7 +45,7 @@ function PartyListPage({ config }: PartyListPageProps) {
 
   const { data, loading, error, reload } = useApiResource(
     () =>
-      apiClient.get<PaginatedResult<Party>>(config.apiBasePath, {
+      apiClient.get<PartyListResult>(config.apiBasePath, {
         search: search || undefined,
         isActive: activeFilter === "all" ? undefined : activeFilter,
         page,
@@ -72,13 +81,9 @@ function PartyListPage({ config }: PartyListPageProps) {
         address: values.address.trim(),
         isActive: values.isActive,
         notes: values.notes.trim(),
-        ...(!editingParty
-          ? {
-              openingBalanceAmount: Number(values.openingBalanceAmount || 0),
-              openingBalanceDate: values.openingBalanceDate,
-              openingBalanceSide: values.openingBalanceSide,
-            }
-          : {}),
+        openingBalanceAmount: Number(values.openingBalanceAmount || 0),
+        openingBalanceSide: values.openingBalanceSide,
+        ...(!editingParty ? { openingBalanceDate: values.openingBalanceDate } : {}),
       };
 
       if (editingParty) {
@@ -134,6 +139,33 @@ function PartyListPage({ config }: PartyListPageProps) {
           </Button>
         }
       />
+
+      {!loading && !error && data?.summary && (
+        <Card className="mb-3">
+          <Card.Body>
+            <div className="row g-3">
+              <div className="col-md-4">
+                <div className="text-muted small">{config.positiveBalanceSummaryLabel}</div>
+                <div className="fs-5 fw-bold text-success">
+                  {formatCurrency(data.summary.positiveBalanceTotal)}
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="text-muted small">{config.negativeBalanceSummaryLabel}</div>
+                <div className="fs-5 fw-bold text-danger">
+                  {formatCurrency(data.summary.negativeBalanceTotal)}
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="text-muted small">{config.netBalanceSummaryLabel}</div>
+                <div className="fs-5 fw-bold">
+                  {formatCurrency(data.summary.netBalance)}
+                </div>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      )}
 
       <Card>
         <Card.Header className="bg-white">

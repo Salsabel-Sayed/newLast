@@ -9,6 +9,9 @@ const SUPPLIER_CONFIG: PartyConfig = {
   pluralLabel: "الموردون",
   icon: "bi-truck",
   balanceLabel: "الرصيد الحالي للمورد (الموجب: علينا له، السالب: لنا عنده)",
+  positiveBalanceSummaryLabel: "إجمالي المستحق للموردين",
+  negativeBalanceSummaryLabel: "إجمالي المستحق لنا لدى الموردين",
+  netBalanceSummaryLabel: "صافي أرصدة الموردين (الموجب مستحق للموردين)",
   debitLabel: "مدين",
   creditLabel: "دائن",
 };

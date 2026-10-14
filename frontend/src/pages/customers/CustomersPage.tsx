@@ -9,6 +9,9 @@ const CUSTOMER_CONFIG: PartyConfig = {
   pluralLabel: "العملاء",
   icon: "bi-people",
   balanceLabel: "الرصيد الحالي للعميل (الموجب: عليه لنا، السالب: له عندنا)",
+  positiveBalanceSummaryLabel: "إجمالي المستحق لنا من العملاء",
+  negativeBalanceSummaryLabel: "إجمالي المستحق للعملاء علينا",
+  netBalanceSummaryLabel: "صافي أرصدة العملاء (الموجب لصالح الشركة)",
   debitLabel: "مدين",
   creditLabel: "دائن",
 };

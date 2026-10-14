@@ -1,6 +1,12 @@
 import { AppError } from "../../middlewares/Errors/appError.js";
 import { withTransaction } from "../../shared/database/withTransaction.js";
 import { recordLedgerEntry } from "../finance/ledger/ledgerEntry.service.js";
+import {
+  attachOpeningBalanceDetails,
+  getOpeningBalanceDetails,
+  signedOpeningBalanceAmount,
+  type OpeningBalanceSide,
+} from "../finance/ledger/openingBalance.service.js";
 import { guardedDelete, type DeleteOutcome } from "../../shared/database/guardedDelete.js";
 import { buildPaginatedResult } from "../../shared/http/pagination.js";
 import { escapeRegex } from "../../shared/utils/escapeRegex.js";
@@ -31,15 +37,43 @@ export async function listSuppliers(options: ListSuppliersOptions) {
 
   const skip = (options.page - 1) * options.limit;
 
-  const [items, total] = await Promise.all([
+  const [items, total, summaryRows] = await Promise.all([
     SupplierModel.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(options.limit),
     SupplierModel.countDocuments(filter),
+    SupplierModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          positiveBalanceTotal: {
+            $sum: { $cond: [{ $gt: ["$balance", 0] }, "$balance", 0] },
+          },
+          negativeBalanceTotal: {
+            $sum: { $cond: [{ $lt: ["$balance", 0] }, { $multiply: ["$balance", -1] }, 0] },
+          },
+          netBalance: { $sum: "$balance" },
+        },
+      },
+    ]),
   ]);
 
-  return buildPaginatedResult(items, total, options.page, options.limit);
+  const partiesWithOpeningBalances = await attachOpeningBalanceDetails("supplier", items);
+  const summary = summaryRows[0] ?? {
+    positiveBalanceTotal: 0,
+    negativeBalanceTotal: 0,
+    netBalance: 0,
+  };
+
+  return {
+    ...buildPaginatedResult(partiesWithOpeningBalances, total, options.page, options.limit),
+    summary: {
+      positiveBalanceTotal: summary.positiveBalanceTotal,
+      negativeBalanceTotal: summary.negativeBalanceTotal,
+      netBalance: summary.netBalance,
+    },
+  };
 }
 
 export async function getSupplierById(id: string) {
@@ -47,12 +81,12 @@ export async function getSupplierById(id: string) {
   if (!supplier) {
     throw new AppError("المورد غير موجود", 404);
   }
-  return supplier;
+  const [partyWithOpeningBalance] = await attachOpeningBalanceDetails("supplier", [supplier]);
+  return partyWithOpeningBalance;
 }
 
-type OpeningBalanceSide = "they_owe_us" | "we_owe_them";
 
-interface CreateSupplierInput extends Omit<SupplierAttrs, "balance"> {
+interface CreateSupplierInput extends Omit<SupplierAttrs, "balance" | "openingBalanceAmount" | "openingBalanceSide" | "openingBalanceDate"> {
   openingBalanceAmount?: number;
   openingBalanceDate?: Date | string;
   openingBalanceSide?: OpeningBalanceSide;
@@ -74,7 +108,7 @@ export async function createSupplier(data: CreateSupplierInput) {
 
   const effectiveOpeningBalanceDate =
     openingBalanceDate === undefined ? new Date() : new Date(openingBalanceDate);
-  if (openingBalanceAmount > 0 && Number.isNaN(effectiveOpeningBalanceDate.getTime())) {
+  if (Number.isNaN(effectiveOpeningBalanceDate.getTime())) {
     throw new AppError("تاريخ الرصيد الافتتاحي غير صحيح", 400);
   }
 
@@ -90,7 +124,7 @@ export async function createSupplier(data: CreateSupplierInput) {
         : -openingBalanceAmount;
 
     const [supplier] = await SupplierModel.create(
-      [{ ...supplierData, balance: initialBalance }],
+      [{ ...supplierData, balance: initialBalance, openingBalanceAmount, openingBalanceSide, openingBalanceDate: effectiveOpeningBalanceDate }],
       { session }
     );
     if (!supplier) throw new AppError("تعذر إنشاء المورد", 500);
@@ -111,10 +145,17 @@ export async function createSupplier(data: CreateSupplierInput) {
   });
 }
 
-export async function updateSupplier(
-  id: string,
-  data: Partial<Omit<SupplierAttrs, "balance">>
-) {
+type UpdateSupplierInput = Partial<
+  Omit<
+    SupplierAttrs,
+    "balance" | "openingBalanceAmount" | "openingBalanceSide" | "openingBalanceDate"
+  >
+> & {
+  openingBalanceAmount?: number;
+  openingBalanceSide?: OpeningBalanceSide;
+};
+
+export async function updateSupplier(id: string, data: UpdateSupplierInput) {
   if (data.code) {
     const existing = await SupplierModel.findOne({
       code: data.code,
@@ -125,16 +166,90 @@ export async function updateSupplier(
     }
   }
 
-  const supplier = await SupplierModel.findByIdAndUpdate(id, data, {
-    returnDocument: "after",
-    runValidators: true,
-  });
+  const {
+    openingBalanceAmount,
+    openingBalanceSide,
+    ...profileData
+  } = data;
+  const openingBalanceProvided =
+    openingBalanceAmount !== undefined || openingBalanceSide !== undefined;
 
-  if (!supplier) {
-    throw new AppError("المورد غير موجود", 404);
+  if (
+    openingBalanceProvided &&
+    (openingBalanceAmount === undefined || openingBalanceSide === undefined)
+  ) {
+    throw new AppError("يجب تحديد قيمة الرصيد وطبيعته معًا", 400);
   }
 
-  return supplier;
+  if (openingBalanceAmount !== undefined) {
+    const hasMoreThanTwoDecimals =
+      Math.abs(openingBalanceAmount * 100 - Math.round(openingBalanceAmount * 100)) > 1e-7;
+    if (!Number.isFinite(openingBalanceAmount) || openingBalanceAmount < 0 || hasMoreThanTwoDecimals) {
+      throw new AppError("قيمة الرصيد الافتتاحي غير صحيحة (بحد أقصى منزلتين عشريتين)", 400);
+    }
+  }
+
+  if (!openingBalanceProvided) {
+    const supplier = await SupplierModel.findByIdAndUpdate(id, profileData, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    if (!supplier) {
+      throw new AppError("المورد غير موجود", 404);
+    }
+    return supplier;
+  }
+
+  return withTransaction(async (session) => {
+    const supplier = await SupplierModel.findById(id).session(session);
+    if (!supplier) {
+      throw new AppError("المورد غير موجود", 404);
+    }
+
+    supplier.set(profileData);
+
+    if (openingBalanceProvided) {
+      const previousOpeningBalance = await getOpeningBalanceDetails(
+        "supplier",
+        supplier,
+        session
+      );
+      const nextAmount = openingBalanceAmount!;
+      const nextSide = openingBalanceSide!;
+      const previousSignedAmount = signedOpeningBalanceAmount(
+        "supplier",
+        previousOpeningBalance.openingBalanceAmount,
+        previousOpeningBalance.openingBalanceSide
+      );
+      const nextSignedAmount = signedOpeningBalanceAmount("supplier", nextAmount, nextSide);
+      const balanceDelta = nextSignedAmount - previousSignedAmount;
+
+      if (balanceDelta !== 0) {
+        await recordLedgerEntry(
+          {
+            partyType: "supplier",
+            partyId: supplier._id,
+            date: new Date(),
+            sourceType: "opening_balance_adjustment",
+            sourceId: supplier._id,
+            description: "تعديل الرصيد الافتتاحي للمورد",
+            debit: balanceDelta < 0 ? -balanceDelta : 0,
+            credit: balanceDelta > 0 ? balanceDelta : 0,
+          },
+          session
+        );
+      }
+
+      supplier.openingBalanceAmount = nextAmount;
+      supplier.openingBalanceSide = nextSide;
+      supplier.openingBalanceDate =
+        supplier.openingBalanceDate ?? previousOpeningBalance.openingBalanceDate ?? new Date();
+      supplier.balance += balanceDelta;
+    }
+
+    await supplier.save({ session });
+    return supplier;
+  });
 }
 
 export async function deleteSupplier(id: string): Promise<DeleteOutcome> {

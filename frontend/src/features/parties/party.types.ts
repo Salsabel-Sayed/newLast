@@ -6,6 +6,9 @@ export interface Party {
   email?: string;
   address?: string;
   balance: number;
+  openingBalanceAmount?: number;
+  openingBalanceSide?: "they_owe_us" | "we_owe_them";
+  openingBalanceDate?: string;
   isActive: boolean;
   notes?: string;
   createdAt: string;
@@ -35,6 +38,12 @@ export interface StatementLine {
   runningBalance: number;
 }
 
+export interface PartyBalanceSummary {
+  positiveBalanceTotal: number;
+  negativeBalanceTotal: number;
+  netBalance: number;
+}
+
 export interface PartyConfig {
   partyType: "customer" | "supplier";
   apiBasePath: string;
@@ -43,6 +52,9 @@ export interface PartyConfig {
   pluralLabel: string;
   icon: string;
   balanceLabel: string;
+  positiveBalanceSummaryLabel: string;
+  negativeBalanceSummaryLabel: string;
+  netBalanceSummaryLabel: string;
   debitLabel: string;
   creditLabel: string;
 }

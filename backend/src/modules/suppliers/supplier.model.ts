@@ -7,6 +7,9 @@ export interface SupplierAttrs {
   email?: string;
   address?: string;
   balance: number;
+  openingBalanceAmount?: number;
+  openingBalanceSide?: "they_owe_us" | "we_owe_them";
+  openingBalanceDate?: Date;
   isActive: boolean;
   notes?: string;
 }
@@ -19,6 +22,9 @@ const supplierSchema = new Schema<SupplierAttrs>(
     email: { type: String },
     address: { type: String },
     balance: { type: Number, required: true, default: 0 },
+    openingBalanceAmount: { type: Number, min: 0 },
+    openingBalanceSide: { type: String, enum: ["they_owe_us", "we_owe_them"] },
+    openingBalanceDate: { type: Date },
     isActive: { type: Boolean, required: true, default: true },
     notes: { type: String },
   },
